@@ -31,7 +31,8 @@ class TestParseString(unittest.TestCase):
         self.assertEqual(parse_string(",1-2,3,"), [1, 2, 3])
 
     def test_invalid_input(self):
-        self.assertEqual(parse_string("a,1-b"), [])
+        with self.assertRaises(Exception):
+            parse_string("a,1-b")
 
     def test_double_dot_delimiter(self):
         self.assertEqual(parse_string("1..3"), [1, 2, 3])
@@ -59,6 +60,10 @@ class TestParseString(unittest.TestCase):
 
     def test_single_value_ranges(self):
         self.assertEqual(parse_string("4-4,6..6,8~8,10 to 10"), [4, 6, 8, 10])
+
+    def test_invalid_range(self):
+        with self.assertRaises(Exception):
+            parse_string("9 to 5")
 
 
 if __name__ == "__main__":
