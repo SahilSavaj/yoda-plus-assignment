@@ -4,7 +4,6 @@ import re
 def parse_string(string: str, output_type: str = "str"):
     all_strings = string.split(",")
 
-    # Stage 1 (basic '-' Expansion)
     result = []
     for s in all_strings:
         s = s.strip()
@@ -22,6 +21,7 @@ def parse_string(string: str, output_type: str = "str"):
 
 
 if __name__ == "__main__":
-    print(parse_string("1-3,5,7-9"))
+    # print(parse_string("1-3,5,7-9"))
     # print(parse_string("a,1-b"))
     # print(parse_string("1 -3, 5,7 - 9"))
+    print(parse_string(" , 1-3 ,5,,7-9 "))
