@@ -33,6 +33,33 @@ class TestParseString(unittest.TestCase):
     def test_invalid_input(self):
         self.assertEqual(parse_string("a,1-b"), [])
 
+    def test_double_dot_delimiter(self):
+        self.assertEqual(parse_string("1..3"), [1, 2, 3])
+        self.assertEqual(parse_string("10..12"), [10, 11, 12])
+
+    def test_tilde_delimiter(self):
+        self.assertEqual(parse_string("4~6"), [4, 5, 6])
+        self.assertEqual(parse_string("7~7"), [7])
+
+    def test_to_delimiter(self):
+        self.assertEqual(parse_string("5 to 7"), [5, 6, 7])
+        self.assertEqual(parse_string("12 to 15"), [12, 13, 14, 15])
+
+    def test_mixed_delimiters(self):
+        self.assertEqual(parse_string("1-2,3..4,5~6,7 to 8"), [1, 2, 3, 4, 5, 6, 7, 8])
+
+    def test_mixed_with_singles_and_spaces(self):
+        self.assertEqual(
+            parse_string(" , 1-3 ,5 to 7,,7..9,9~11 "),
+            [1, 2, 3, 5, 6, 7, 7, 8, 9, 9, 10, 11],
+        )
+
+    def test_overlapping_ranges(self):
+        self.assertEqual(parse_string("1-3,2..4"), [1, 2, 3, 2, 3, 4])
+
+    def test_single_value_ranges(self):
+        self.assertEqual(parse_string("4-4,6..6,8~8,10 to 10"), [4, 6, 8, 10])
+
 
 if __name__ == "__main__":
     unittest.main()
