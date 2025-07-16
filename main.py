@@ -1,13 +1,51 @@
 import re
+from typing import List
+from enum import Enum
+
+
+class OutputType(Enum):
+    LIST = "list"
+    STRING = "string"
+    SET = "set"
+
 
 range_delimiters = ["-", "..", "~", " to "]
 step_delimiters = [":"]
 
 
-def parse_string(string: str, output_type: str = "str"):
+def format_output_to_list(result: List):
+    return result
+
+
+def format_output_to_string(result: List):
+    return ",".join(map(str, result))
+
+
+def format_output_to_set(result: List):
+    return set(result)
+
+
+output_format_handler = {
+    OutputType.LIST: format_output_to_list,
+    OutputType.STRING: format_output_to_string,
+    OutputType.SET: format_output_to_set,
+}
+
+empty_outputs = {OutputType.LIST: [], OutputType.STRING: "", OutputType.SET: set()}
+
+
+def parse_string(string: str, output_type: str = "list"):
+    try:
+        output_type_enum = OutputType(output_type)
+    except Exception:
+        raise Exception(f"Invalid output_type '{output_type}'.")
+
     all_strings = string.split(",")
     if not string or not all_strings:
-        return []
+        return empty_outputs[output_type_enum]
+
+    if not any(s.strip() for s in all_strings):
+        return empty_outputs[output_type_enum]
 
     result = []
     for s in all_strings:
@@ -25,7 +63,9 @@ def parse_string(string: str, output_type: str = "str"):
         if not matched:
             result.append(parse_single_value(s))
 
-    return list(dict.fromkeys(result))
+    after_deduped = list(dict.fromkeys(result))
+
+    return output_format_handler[output_type_enum](after_deduped)
 
 
 def parse_range_with_step(s: str, range_delim: str):
@@ -87,5 +127,9 @@ if __name__ == "__main__":
     # print(parse_string("1 -3, 5,7 - 9"))
     # print(parse_string(" , 1-3 ,5,,7-9 "))
     # print(parse_string(" , 1-3 ,5 to 7,,7..9,9~11 "))
-    print(parse_string("1-3,5,7-9,9-3"))
+    # print(parse_string("1-3,5,7-9,9-3"))
     # print(parse_string("1-5:x"))
+    print(parse_string("1-3,5,7 to 9,9-3", "list"))
+    print(parse_string("1-3,5,7~9,9-3", "set"))
+    print(parse_string("1-3,5,7..9,9-3", "string"))
+    # print(parse_string("1-3,5,7-9,9-3", "sahil"))

@@ -105,6 +105,40 @@ class TestParseString(unittest.TestCase):
         with self.assertRaises(Exception):
             parse_string("1-5:0")
 
+    def test_output_list_format(self):
+        self.assertEqual(parse_string("1-3,2-5", "list"), [1, 2, 3, 4, 5])
+        self.assertEqual(parse_string("5,2,1", "list"), [5, 2, 1])
+        self.assertEqual(parse_string("", "list"), [])
+
+    def test_output_string_format(self):
+        self.assertEqual(parse_string("1-3,2-5", "string"), "1,2,3,4,5")
+        self.assertEqual(parse_string("5,2,1", "string"), "5,2,1")
+        self.assertEqual(parse_string("", "string"), "")
+
+    def test_output_set_format(self):
+        self.assertEqual(parse_string("1-3,2-5", "set"), {1, 2, 3, 4, 5})
+        self.assertEqual(parse_string("5,2,1,1", "set"), {1, 2, 5})
+        self.assertEqual(parse_string("", "set"), set())
+
+    def test_output_default_format(self):
+        # Should default to "list"
+        self.assertEqual(parse_string("1-3,2-5"), [1, 2, 3, 4, 5])
+        self.assertEqual(parse_string("2,1,3"), [2, 1, 3])
+
+    def test_invalid_output_type_falls_back_to_list(self):
+        with self.assertRaises(Exception):
+            parse_string("1-3,2-5", "xyz")
+
+    def test_formatting_with_duplicates(self):
+        self.assertEqual(parse_string("1,2,2,3", "list"), [1, 2, 3])
+        self.assertEqual(parse_string("1,2,2,3", "set"), {1, 2, 3})
+        self.assertEqual(parse_string("1,2,2,3", "string"), "1,2,3")
+
+    def test_formatting_with_steps(self):
+        self.assertEqual(parse_string("1-7:3", "list"), [1, 4, 7])
+        self.assertEqual(parse_string("7-1:2", "set"), {7, 5, 3, 1})
+        self.assertEqual(parse_string("1-5:2", "string"), "1,3,5")
+
 
 if __name__ == "__main__":
     unittest.main()
