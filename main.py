@@ -25,7 +25,7 @@ def parse_string(string: str, output_type: str = "str"):
         if not matched:
             result.append(parse_single_value(s))
 
-    return result
+    return list(dict.fromkeys(result))
 
 
 def parse_range_with_step(s: str, range_delim: str):
@@ -87,5 +87,5 @@ if __name__ == "__main__":
     # print(parse_string("1 -3, 5,7 - 9"))
     # print(parse_string(" , 1-3 ,5,,7-9 "))
     # print(parse_string(" , 1-3 ,5 to 7,,7..9,9~11 "))
-    # print(parse_string("1-3,5,7-9,9-3"))
-    print(parse_string("1-5:x"))
+    print(parse_string("1-3,5,7-9,9-3"))
+    # print(parse_string("1-5:x"))

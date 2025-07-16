@@ -22,7 +22,7 @@ class TestParseString(unittest.TestCase):
         self.assertEqual(parse_string("1 -3, 5,7 - 9"), [1, 2, 3, 5, 7, 8, 9])
 
     def test_duplicate_numbers(self):
-        self.assertEqual(parse_string("1,1-2,2"), [1, 1, 2, 2])
+        self.assertEqual(parse_string("1,1-2,2"), [1, 2])
 
     def test_empty_string(self):
         self.assertEqual(parse_string(""), [])
@@ -52,11 +52,11 @@ class TestParseString(unittest.TestCase):
     def test_mixed_with_singles_and_spaces(self):
         self.assertEqual(
             parse_string(" , 1-3 ,5 to 7,,7..9,9~11 "),
-            [1, 2, 3, 5, 6, 7, 7, 8, 9, 9, 10, 11],
+            [1, 2, 3, 5, 6, 7, 8, 9, 10, 11],
         )
 
     def test_overlapping_ranges(self):
-        self.assertEqual(parse_string("1-3,2..4"), [1, 2, 3, 2, 3, 4])
+        self.assertEqual(parse_string("1-3,2..4"), [1, 2, 3, 4])
 
     def test_single_value_ranges(self):
         self.assertEqual(parse_string("4-4,6..6,8~8,10 to 10"), [4, 6, 8, 10])
